@@ -69,21 +69,21 @@ all_cols = list(ws.columns)
 x = 0
 for col in all_cols:
     if x==83:
-        process_col(days_info, col, 8, 164, 6)
+        process_col(days_info, col, 8, 178, 6)
     if x==84:
-        process_col(days_info, col, 8, 164, 0)
+        process_col(days_info, col, 8, 178, 0)
     if x==85:
-        process_col(days_info, col, 8, 164, 1)
+        process_col(days_info, col, 8, 178, 1)
     if x==86:
-        process_col(days_info, col, 8, 164, 2)
+        process_col(days_info, col, 8, 178, 2)
     if x==87:
-        process_col(days_info, col, 8, 164, 3)
+        process_col(days_info, col, 8, 178, 3)
     if x==88:
-        process_col(days_info, col, 8, 164, 4)
+        process_col(days_info, col, 8, 178, 4)
     if x==89:
-        process_col(days_info, col, 8, 164, 5)
+        process_col(days_info, col, 8, 178, 5)
     if x==90:
-        process_col(days_info, col, 33, 164, 7)
+        process_col(days_info, col, 33, 178, 7)
     x += 1
 
 # Still need to add in Pages Read + Bed time
