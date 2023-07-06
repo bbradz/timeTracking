@@ -60,7 +60,7 @@ for col in all_cols:
     if (x==20 or x==21 or x==22 or x==23):
         process_col(may23, col, 0, 1488, x%5) 
     if (x==25 or x==26 or x==27 or x==28):
-        process_col(jun23, col, 0, 528, x%5)
+        process_col(jun23, col, 0, 1440, x%5)
     x += 1
     
 # Process additional info collected daily from 'Month Nav' up to end of May
