@@ -1,12 +1,21 @@
 import psycopg2;
 import psycopg2.extras;
-import creds;
+
 import ExcelExtracting;
 import math;
 import datetime;
+
 import re;
 from cleantext import clean;
+
+import sys;
+import os;
+creds_file = "/Users/benbradley/Downloads"
+path = os.path.abspath(creds_file)
+sys.path.append(path)
+import creds;
 creds = creds.creds
+
 
 #   Run command and commit to db
 def run(message):
@@ -95,8 +104,8 @@ try:
     # addGranularMonth(7, 31, 5, 2023, 1, jan23); addGranularMonth(1, 28, 2, 2023, 2, feb23); addGranularMonth(1, 31, 2, 2023, 3, mar23); addGranularMonth(1, 30, 5, 2023, 4, apr23); addGranularMonth(1, 31, 0, 2023, 5, may23); addGranularMonth(1, 30, 3, 2023, 6, jun23);
     # add_days_info(days_info)
 
-    show('granularData')
-    show('dailyData')
+    # show('granularData')
+    # show('dailyData')
 
     # run("delete from granularData;")
     # run("delete from dailyData;")
