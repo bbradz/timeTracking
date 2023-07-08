@@ -1,5 +1,6 @@
 from openpyxl import load_workbook
 import re
+from cleantext import clean;
 
 def extract():
     data_file = '/Users/benbradley/Downloads/Current Time Tracking 🗓️.xlsx'
@@ -35,34 +36,51 @@ def extract():
     categories = options[1:31]
     groups = options[32:]
 
-    def process_col(month, col, min, max, index):
+    def process_col(month, col, min, max, index, cut):
         output = []
+        x = 1
         for cell in col:
-            if max > 0 & min < 1:
-                output.append(cell.value)
-                max -= 1
-                min -= 1
+            if (x > min and x < max+1):
+                if (cut==True):
+                    result = clean(cell.value, no_emoji=True)
+                    result = re.sub('@', 'at ', result)
+                    result = re.sub(r'[^A-Za-z0-9 ]+', '', result)
+                    result = re.sub(r"\s+", '_', result)
+                    output.append(result.lower())
+                else:
+                    output.append(cell.value)
+            x += 1
         month[index] = output
-
-    # all_contents = []
 
     # Process primary 30-minute swaths for every month from 'To SQL' up to end of 11-6-23
     ws = wb['To SQL']
     all_cols = list(ws.columns)
     x = 0
     for col in all_cols:
-        if (x==0 or x==1 or x==2 or x==3):
-            process_col(jan23, col, 0, 1200, x%5)
-        if (x==5 or x==6 or x==7 or x==8):
-            process_col(feb23, col, 0, 1344, x%5)
-        if (x==10 or x==11 or x==12 or x==13): 
-            process_col(mar23, col, 0, 1488, x%5)
-        if (x==15 or x==16 or x==17 or x==18):
-            process_col(apr23, col, 0, 1440, x%5)
-        if (x==20 or x==21 or x==22 or x==23):
-            process_col(may23, col, 0, 1488, x%5) 
-        if (x==25 or x==26 or x==27 or x==28):
-            process_col(jun23, col, 0, 1440, x%5)
+        if (x==0 or x==1 or x==3):
+            process_col(jan23, col, 0, 1200, x%5, True)
+        if (x==2):
+            process_col(jan23, col, 0, 1200, x%5, False)
+        if (x==5 or x==6 or x==8):
+            process_col(feb23, col, 0, 1344, x%5, True)
+        if (x==7):
+            process_col(feb23, col, 0, 1344, x%5, False)
+        if (x==10 or x==11 or x==13): 
+            process_col(mar23, col, 0, 1488, x%5, True)
+        if (x==12):
+            process_col(mar23, col, 0, 1488, x%5, False)
+        if (x==15 or x==16 or x==18):
+            process_col(apr23, col, 0, 1440, x%5, True)
+        if (x==17):
+            process_col(apr23, col, 0, 1440, x%5, False)
+        if (x==20 or x==21 or x==23):
+            process_col(may23, col, 0, 1488, x%5, True) 
+        if (x==22):
+            process_col(may23, col, 0, 1488, x%5, False) 
+        if (x==25 or x==26 or x==28):
+            process_col(jun23, col, 0, 1440, x%5, True)
+        if (x==27):
+            process_col(jun23, col, 0, 1440, x%5, False)
         x += 1
         
     # Process additional info collected daily from 'Month Nav' up to end of May
@@ -71,21 +89,21 @@ def extract():
     x = 0
     for col in all_cols:
         if x==83:
-            process_col(days_info, col, 8, 178, 6)
+            process_col(days_info, col, 8, 187, 6, False)
         if x==84:
-            process_col(days_info, col, 8, 178, 0)
+            process_col(days_info, col, 8, 187, 0, False)
         if x==85:
-            process_col(days_info, col, 8, 178, 1)
+            process_col(days_info, col, 8, 187, 1, False)
         if x==86:
-            process_col(days_info, col, 8, 178, 2)
+            process_col(days_info, col, 8, 187, 2, False)
         if x==87:
-            process_col(days_info, col, 8, 178, 3)
+            process_col(days_info, col, 8, 187, 3, False)
         if x==88:
-            process_col(days_info, col, 8, 178, 4)
+            process_col(days_info, col, 8, 187, 4, False)
         if x==89:
-            process_col(days_info, col, 8, 178, 5)
+            process_col(days_info, col, 8, 187, 5, False)
         if x==90:
-            process_col(days_info, col, 33, 178, 7)
+            process_col(days_info, col, 33, 187, 7, False)
         x += 1
 
     # Still need to add in Pages Read + Bed time
