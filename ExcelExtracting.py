@@ -1,6 +1,6 @@
+import iniconfig
 from openpyxl import load_workbook
 import re
-from cleantext import clean;
 
 def extract():
     data_file = '/Users/benbradley/Downloads/Current Time Tracking 🗓️.xlsx'
@@ -21,8 +21,8 @@ def extract():
     may23 = [0]*4
 
     # Lists to be filled with day info
-    # [👕,🧼,💩,🍺,🍃,Caffeine,Work,💤]
-    days_info = [0]*8
+    # [👕,🧼,💩,🍺,🍃,Caffeine,💤,Work,Summary]
+    days_info = [0]*9
 
     # Put together list of possible Categories & Group types
     ws = wb['Dropdown Backend']
@@ -32,7 +32,6 @@ def extract():
         for cell in col:
             if cell.value != None:
                 options.append(cell.value)
-
     categories = options[1:31]
     groups = options[32:]
 
@@ -41,13 +40,6 @@ def extract():
         x = 1
         for cell in col:
             if (x > min and x < max+1):
-                if (cut==True):
-                    result = clean(cell.value, no_emoji=True)
-                    result = re.sub('@', 'at ', result)
-                    result = re.sub(r'[^A-Za-z0-9 ]+', '', result)
-                    result = re.sub(r"\s+", '_', result)
-                    output.append(result.lower())
-                else:
                     output.append(cell.value)
             x += 1
         month[index] = output
@@ -89,6 +81,7 @@ def extract():
     x = 0
     for col in all_cols:
         if x==83:
+            # 187 set to be updated to 2023-07-04
             process_col(days_info, col, 8, 187, 6, False)
         if x==84:
             process_col(days_info, col, 8, 187, 0, False)
@@ -106,6 +99,28 @@ def extract():
             process_col(days_info, col, 33, 187, 7, False)
         x += 1
 
-    # Still need to add in Pages Read + Bed time
+    # Compile all the summaries from each of the month
+    def getSummary(table):
+        ws = wb[table]
+        all_cols = list(ws.columns)
+        options = []
+        for col in all_cols:
+            for cell in col:
+                if cell.value != None:
+                    if ("Summary:" in str(cell.value)):
+                        if (str(cell.value) == 'Summary: '):
+                            result = "no summary available"
+                        else:
+                            result = re.sub('Summary: ','', str(cell.value))
+                        options.append(result)
+        return options
+    janSummary = ["No summaries for Jan"]*29
+    summaries = janSummary+getSummary('Feb-23')+getSummary('Mar-23')+getSummary('Apr-23')+getSummary('May-23')+getSummary('Jun-23')
+    days_info[8] = summaries
+
+    # Haven't included Pages Read + Bed time
     # re.findall(r'([1-9]*[-][1-9]*[-][1-9]*)\w', all_contents)
     return jan23, feb23, mar23, apr23, may23, jun23, days_info
+
+# a,b,c,d,e,f,g = extract()
+# print(g[8])
