@@ -4,7 +4,7 @@ import re
 
 def extract():
     data_file = '/Users/benbradley/Downloads/Current Time Tracking 🗓️.xlsx'
-
+    
     # Load the entire workbook.
     wb = load_workbook(data_file)
 
