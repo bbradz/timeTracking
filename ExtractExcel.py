@@ -121,6 +121,3 @@ def extract():
     # Haven't included Pages Read + Bed time
     # re.findall(r'([1-9]*[-][1-9]*[-][1-9]*)\w', all_contents)
     return jan23, feb23, mar23, apr23, may23, jun23, days_info
-
-# a,b,c,d,e,f,g = extract()
-# print(g[8])

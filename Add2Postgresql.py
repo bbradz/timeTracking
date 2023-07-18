@@ -68,17 +68,19 @@ def addGranularMonth(firstDayNum, lastDayNum, firstDayIndex, yearNum, monthNum, 
 #    run("delete from granularData;")
 
 #    insert daily collected datapoints for entire month into dailydata
-def add_days_info(arr):
+def add_days_info(arr): 
     day = datetime.date(2023, 1, 7)
     d = datetime.timedelta(days=1)
+    # [👕,🧼,💩,🍺,🍃,Caffeine,💤,Work,Summary]
     # 179 set to be updated to 2023-07-04
     for i in range(179):
         sleep = f"\'{arr[6][i]}\'"
-        laundry = f"\'{arr[1][i]}\'"
-        shower = f"\'{arr[2][i]}\'"
-        poop = f"\'{arr[3][i]}\'"
-        a = f"\'{arr[4][i]}\'"
-        w = f"\'{arr[5][i]}\'"
+        laundry = f"\'{arr[0][i]}\'"
+        shower = f"\'{arr[1][i]}\'"
+        poop = f"\'{arr[2][i]}\'"
+        a = f"\'{arr[3][i]}\'"
+        w = f"\'{arr[4][i]}\'"
+        c = f"\'{arr[5][i]}\'"
         dayName = trimString(day.strftime("%A")).lower()
         dayName = f"\'{dayName}\'"
         date = f"\'{str(day)}\'"
@@ -87,10 +89,10 @@ def add_days_info(arr):
             worktime = f"\'{arr[7][i-26]}\'"
         else:
             worktime = f"\'0\'"
-        message = f"INSERT INTO \"dailydata\" (t1, t2, sleep, worktime, laundry, shower, poop, a, w, summary) VALUES ({date}, {dayName}, {sleep}, {worktime}, {laundry}, {shower}, {poop}, {a}, {w}, {summary});"
+        message = f"INSERT INTO \"dailydata\" (t1, t2, sleep, worktime, laundry, shower, poop, a, w, c, summary) VALUES ({date}, {dayName}, {sleep}, {worktime}, {laundry}, {shower}, {poop}, {a}, {w}, {c}, {summary});"
         run(message)
         day += d
-#    run("create table dailyData (t1 Date, t2 VARCHAR(10), sleep float DEFAULT 0, workTime float DEFAULT 0, laundry int DEFAULT 0, shower int DEFAULT 0, poop int DEFAULT 0, a int DEFAULT 0, w int DEFAULT 0, summary TEXT);")
+#    run("create table dailyData (t1 Date, t2 VARCHAR(10), sleep float DEFAULT 0, workTime float DEFAULT 0, laundry int DEFAULT 0, shower int DEFAULT 0, poop int DEFAULT 0, a int DEFAULT 0, w int DEFAULT 0, c int DEFAULT 0, summary TEXT);")
 #    add_days_info(days_info)
 #    show('dailyData')
 #    run("delete from dailyData;")
@@ -131,12 +133,13 @@ def findIntervals(data):
             result.append(interval)
             interval = 0
     return result
-
 def plotIntervals(data, color):
     data = findIntervals(data)
     x = [i for i in range(len(data))]
     plt.fill_between(x, data, zorder=2, color=color)
     plt.grid(True)
+    plt.xticks(color='w')
+    plt.ylabel("Days between X")
     plt.show()
 
 
@@ -160,9 +163,35 @@ try:
                     host=creds["host"])
     cur = conn.cursor()
 
-    res = select_from('dailyData','sleep','worktime','laundry','shower')
+    #run("delete from dailyData;")
+    #run("delete from granularData;")
 
-    plotIntervals(res[3], 'lightblue')
+    #add_days_info(days_info)
+    #addGranularMonth(7, 31, 5, 2023, 1, jan23); addGranularMonth(1, 28, 2, 2023, 2, feb23); addGranularMonth(1, 31, 2, 2023, 3, mar23); addGranularMonth(1, 30, 5, 2023, 4, apr23); addGranularMonth(1, 31, 0, 2023, 5, may23); addGranularMonth(1, 30, 3, 2023, 6, jun23);
+
+    res = select_from('dailyData','sleep','worktime','laundry','shower','poop','a','w','c')
+    # create_calplot(res[0], '1-7-23', '7-4-23', 'viridis_r', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # create_calplot(res[1], '1-7-23', '7-4-23', 'YlOrBr', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # create_calplot(res[2], '1-7-23', '7-4-23', 'gist_yarg', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # create_calplot(res[3], '1-7-23', '7-4-23', 'Blues', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # create_calplot(res[4], '1-7-23', '7-4-23', 'Oranges', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # create_calplot(res[5], '1-7-23', '7-4-23', 'Wistia', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    plotIntervals(res[5],'gold')
+    plt.show()
+    # create_calplot(res[6], '1-7-23', '7-4-23', 'summer', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    plotIntervals(res[6],'forestgreen')
+    plt.show()
+    # create_calplot(res[7], '1-7-23', '7-4-23', 'YlOrRd', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    plotIntervals(res[7],'darkgoldenrod')
+    plt.show()
 
 
 except Exception as error:
