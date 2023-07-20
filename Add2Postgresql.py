@@ -4,6 +4,7 @@ import psycopg2.extras;
 import ExtractExcel;
 import math;
 import datetime;
+from collections import Counter
 
 import pandas as pd;
 import numpy as np;
@@ -22,7 +23,6 @@ sys.path.append(path)
 import creds;
 creds = creds.creds
 
-
 #   Run command and commit to db
 def run(message):
     cur.execute(message)
@@ -38,6 +38,19 @@ def trimString(string):
     string = re.sub(r'[^A-Za-z0-9 ]+', '', string)
     string = re.sub(r"\s+", '_', string)
     return string;
+#   return an array of the unique elements in a list
+def unique(list1):
+    x = np.array(list1)
+    return np.unique(x)
+def fullCounts(data, x):
+    ret = {}
+    for i in x:
+        if i in data.keys():
+            ret[i]= data[i]
+        else:
+            ret[i]=0
+    return ret
+    
 
 
 #    insert 30-min slots for entire month into granulardata
@@ -141,6 +154,16 @@ def plotIntervals(data, color):
     plt.xticks(color='w')
     plt.ylabel("Days between X")
     plt.show()
+    # plotIntervals(res[5],'gold')
+    # plt.show()
+    # create_calplot(res[6], '1-7-23', '7-4-23', 'summer', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # plotIntervals(res[6],'forestgreen')
+    # plt.show()
+    # create_calplot(res[7], '1-7-23', '7-4-23', 'YlOrRd', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # plotIntervals(res[7],'darkgoldenrod')
+    # plt.show()
 
 
 # startString ex: '1-7-23', endString='7-4-23', data= array
@@ -150,6 +173,18 @@ def create_calplot(data, startString, endString, cmap, edgecolor, fillcolor, lin
                      fillcolor=fillcolor, linewidth=linewidth,
                      daylabels=daylabels, dayticks=dayticks)
     return plot
+    # create_calplot(res[0], '1-7-23', '7-4-23', 'viridis_r', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # create_calplot(res[1], '1-7-23', '7-4-23', 'YlOrBr', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # create_calplot(res[2], '1-7-23', '7-4-23', 'gist_yarg', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # create_calplot(res[3], '1-7-23', '7-4-23', 'Blues', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # create_calplot(res[4], '1-7-23', '7-4-23', 'Oranges', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
+    # create_calplot(res[5], '1-7-23', '7-4-23', 'Wistia', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
+    # plt.show()
 
 
 #    Call ExcelExtracting and assign it to new variables
@@ -169,29 +204,27 @@ try:
     #add_days_info(days_info)
     #addGranularMonth(7, 31, 5, 2023, 1, jan23); addGranularMonth(1, 28, 2, 2023, 2, feb23); addGranularMonth(1, 31, 2, 2023, 3, mar23); addGranularMonth(1, 30, 5, 2023, 4, apr23); addGranularMonth(1, 31, 0, 2023, 5, may23); addGranularMonth(1, 30, 3, 2023, 6, jun23);
 
-    res = select_from('dailyData','sleep','worktime','laundry','shower','poop','a','w','c')
-    # create_calplot(res[0], '1-7-23', '7-4-23', 'viridis_r', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
-    # plt.show()
-    # create_calplot(res[1], '1-7-23', '7-4-23', 'YlOrBr', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
-    # plt.show()
-    # create_calplot(res[2], '1-7-23', '7-4-23', 'gist_yarg', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
-    # plt.show()
-    # create_calplot(res[3], '1-7-23', '7-4-23', 'Blues', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
-    # plt.show()
-    # create_calplot(res[4], '1-7-23', '7-4-23', 'Oranges', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
-    # plt.show()
-    # create_calplot(res[5], '1-7-23', '7-4-23', 'Wistia', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
-    # plt.show()
-    plotIntervals(res[5],'gold')
-    plt.show()
-    # create_calplot(res[6], '1-7-23', '7-4-23', 'summer', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
-    # plt.show()
-    plotIntervals(res[6],'forestgreen')
-    plt.show()
-    # create_calplot(res[7], '1-7-23', '7-4-23', 'YlOrRd', 'black', 'white', 1, 'MTWTFSS', [0, 2, 4, 6])
-    # plt.show()
-    plotIntervals(res[7],'darkgoldenrod')
-    plt.show()
+    res = select_from('granularData','category')
+
+    x = unique(res[0])
+
+    janCatCounts = Counter(res[0][:1200])
+    print(fullCounts(janCatCounts, x))
+
+    febCatCounts = Counter(res[0][1200:2544])
+    print(fullCounts(febCatCounts, x))
+    
+    marCatCounts = Counter(res[0][2544:4032])
+    print(fullCounts(marCatCounts, x))
+    
+    aprCatCounts = Counter(res[0][4032:5472])
+    print(fullCounts(aprCatCounts, x))
+
+    mayCatCounts = Counter(res[0][5472:6960])
+    print(fullCounts(mayCatCounts, x))
+
+    junCatCounts = Counter(res[0][6960:8400])
+    print(fullCounts(junCatCounts, x))
 
 
 except Exception as error:
